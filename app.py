@@ -32,6 +32,13 @@ def redirect_start():
 @app.get("/questions/<int:q_id>")
 def show_question(q_id):
     """renders survey question forms"""
+
+    if q_id != len(session["responses"]):
+        return redirect(f"/questions/{len(session['responses'])}")
+
+    if len(session["responses"]) == len(survey.questions):
+        return redirect("/thank-you")
+
     question_prompt = survey.questions[q_id].prompt
     choices = survey.questions[q_id].choices
 
@@ -57,7 +64,7 @@ def redirect_next_question():
         return redirect("/thank-you")
 
     else:
-        return redirect(f"/questions/{len(responses)}")
+        return redirect(f"/questions/{len(session['responses'])}")
 
 
 @app.get("/thank-you")
