@@ -1,20 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
 
-  <h1>{{ question.prompt }}</h1>
 
-  <form action="/answer" method="POST">
+<h1>{{ question_prompt }}</h1>
 
-      <!-- you should have one item like this for every choice -->
-      <p>
-        <input
-            type="radio"
-            name="answer"
-            value="value-goes-here">
-        choice-goes-here
-      </p>
+<form action="/answer" method="POST">
 
-    <button>Continue</button>
-  </form>
+  <!-- you should have one item like this for every choice -->
+  <!--TODO: We need to create some loop to template and iterate on the choices -->
+
+  {% for choice in choices %}
+
+  <p>
+    <input type="radio" name="answer" value="{{ choice }}">
+    {{ choice }}
+  </p>
+
+  {% endfor %}
+
+  <button>Continue</button>
+</form>
+
+
+
+
+
 
 {% endblock %}
