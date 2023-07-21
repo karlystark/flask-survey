@@ -37,7 +37,7 @@ def show_question(q_id):
 
     if q_id != len(responses):
         #is trying to access questions out of order
-        flash(f"you are attempting to access an invalid question: {q_id}")
+        flash(f"{q_id} is an invalid question")
         return redirect(f"/questions/{len(responses)}")
 
     if len(responses) == len(survey.questions):
