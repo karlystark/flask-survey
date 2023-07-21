@@ -10,11 +10,11 @@ debug = DebugToolbarExtension(app)
 
 
 responses = []
-print('len response: ', type(len(responses)))
 
 
 @app.get("/")
 def home_render():
+    """renders the homepage with welcome and survey instructions"""
     title = survey.title
     instructions = survey.instructions
 
@@ -27,15 +27,14 @@ def home_render():
 
 @app.post("/begin")
 def redirect_start():
+    """clears survey response list, directs to first survey question page"""
     responses.clear()
     return redirect("/questions/0")
-
-# TODO: What question to route to next
 
 
 @app.get("/questions/<int:q_id>")
 def show_question(q_id):
-    print('len response: ', type(len(responses)))
+    """renders survey question forms"""
     question_prompt = survey.questions[q_id].prompt
     choices = survey.questions[q_id].choices
 
@@ -48,13 +47,27 @@ def show_question(q_id):
 
 @app.post("/answer")
 def redirect_next_question():
-
+    """pulls response from form and adds to survey response list,
+       if questions remain, direct back to survey question page,
+       else direct to thank you page"""
     response = request.form["answer"]
 
     responses.append(response)
 
     if len(responses) == len(survey.questions):
-        return redirect("/Thank You!")
+        return redirect("/thank-you")
 
     else:
         return redirect(f"/questions/{len(responses)}")
+
+
+@app.get("/thank-you")
+def show_thank_you_message():
+    """renders thank you page with list of survey questions and responses"""
+    questions = [prompt.prompt for prompt in survey.questions]
+    response_pairs = dict(zip(questions, responses))
+
+    return render_template(
+        'completion.html',
+        response_pairs = response_pairs
+        )
