@@ -9,9 +9,6 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
 
-responses = []
-
-
 @app.get("/")
 def home_render():
     """renders the homepage with welcome and survey instructions"""
@@ -28,7 +25,7 @@ def home_render():
 @app.post("/begin")
 def redirect_start():
     """clears survey response list, directs to first survey question page"""
-    responses.clear()
+    session["responses"] = []
     return redirect("/questions/0")
 
 
@@ -52,9 +49,11 @@ def redirect_next_question():
        else direct to thank you page"""
     response = request.form["answer"]
 
+    responses = session["responses"]
     responses.append(response)
+    session["responses"] = responses
 
-    if len(responses) == len(survey.questions):
+    if len(session["responses"]) == len(survey.questions):
         return redirect("/thank-you")
 
     else:
@@ -65,7 +64,7 @@ def redirect_next_question():
 def show_thank_you_message():
     """renders thank you page with list of survey questions and responses"""
     questions = [prompt.prompt for prompt in survey.questions]
-    response_pairs = dict(zip(questions, responses))
+    response_pairs = dict(zip(questions, session["responses"]))
 
     return render_template(
         'completion.html',
