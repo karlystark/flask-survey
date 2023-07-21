@@ -6,8 +6,6 @@
 
 <form action="/answer" method="POST">
 
-  <!-- you should have one item like this for every choice -->
-  <!--TODO: We need to create some loop to template and iterate on the choices -->
 
   {% for choice in choices %}
 
@@ -17,6 +15,14 @@
   </p>
 
   {% endfor %}
+
+  {% if get_flashed_messages() %}
+
+  {% for msg in get_flashed_messages() %}
+  <p>{{ msg }}</p>
+  {% endfor %}
+
+  {% endif %}
 
   <button>Continue</button>
 </form>
