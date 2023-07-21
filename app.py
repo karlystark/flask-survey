@@ -33,10 +33,15 @@ def redirect_start():
 def show_question(q_id):
     """renders survey question forms"""
 
-    if q_id != len(session["responses"]):
-        return redirect(f"/questions/{len(session['responses'])}")
+    responses = session["responses"]
 
-    if len(session["responses"]) == len(survey.questions):
+    if q_id != len(responses):
+        #is trying to access questions out of order
+        flash(f"you are attempting to access an invalid question: {q_id}")
+        return redirect(f"/questions/{len(responses)}")
+
+    if len(responses) == len(survey.questions):
+        #has reached end of survey
         return redirect("/thank-you")
 
     question_prompt = survey.questions[q_id].prompt
@@ -54,12 +59,14 @@ def redirect_next_question():
     """pulls response from form and adds to survey response list,
        if questions remain, direct back to survey question page,
        else direct to thank you page"""
-    response = request.form["answer"]
+    choice = request.form["answer"]
 
+    #append each choice/response to the session
     responses = session["responses"]
-    responses.append(response)
+    responses.append(choice)
     session["responses"] = responses
 
+    #redirect based on lengths of session responses and questions
     if len(session["responses"]) == len(survey.questions):
         return redirect("/thank-you")
 
